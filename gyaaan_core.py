@@ -31,7 +31,8 @@ from search_service import needs_web_search, normalize_mode, web_search
 from image_service import detect_image_request, generate_images
 
 
-load_dotenv(ENV_FILE)
+if os.path.exists(ENV_FILE):
+    load_dotenv(ENV_FILE)
 
 PUBLIC_MODEL_NAME = os.getenv("PUBLIC_MODEL_NAME", "abcdefg").strip() or "abcdefg"
 INTERNAL_GROQ_MODEL = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b").strip() or "qwen/qwen3.8-27b"
@@ -52,7 +53,8 @@ CONVERSATIONAL MASTERY & CHATGPT-STYLE DIALOGUE SKILLS:
 
 
 def get_groq_client():
-    load_dotenv(ENV_FILE, override=True)
+    if os.path.exists(ENV_FILE):
+        load_dotenv(ENV_FILE, override=False)
     api_key = os.getenv("GROQ_API_KEY", "").strip()
     if not api_key or api_key in {"YOUR_GROQ_KEY", "gsk_your_groq_api_key_here"}:
         raise ValueError(
@@ -123,7 +125,8 @@ def build_groq_messages(user_input, history, web_context=None, file_context=None
 
 
 def ask_groq_stream(user_input, history, web_context=None, file_context=None, images=None):
-    load_dotenv(ENV_FILE, override=True)
+    if os.path.exists(ENV_FILE):
+        load_dotenv(ENV_FILE, override=False)
     current_groq_model = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b").strip() or "qwen/qwen3.8-27b"
     model_name = "llama-3.2-11b-vision-preview" if images else current_groq_model
     messages = build_groq_messages(user_input, history, web_context, file_context, images)
@@ -158,7 +161,8 @@ def ask_groq_stream(user_input, history, web_context=None, file_context=None, im
 
 
 def ask_groq(user_input, history, web_context=None, file_context=None, images=None):
-    load_dotenv(ENV_FILE, override=True)
+    if os.path.exists(ENV_FILE):
+        load_dotenv(ENV_FILE, override=False)
     current_groq_model = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b").strip() or "qwen/qwen3.8-27b"
     model_name = "llama-3.2-11b-vision-preview" if images else current_groq_model
     messages = build_groq_messages(user_input, history, web_context, file_context, images)
@@ -303,7 +307,11 @@ def chat_response():
             except Exception as exc:
                 yield f"data: {json.dumps({'type': 'error', 'error': str(exc)})}\n\n"
 
-        return Response(stream_with_context(generate_sse()), mimetype="text/event-stream")
+        resp = Response(stream_with_context(generate_sse()), mimetype="text/event-stream")
+        resp.headers["Cache-Control"] = "no-cache, no-transform"
+        resp.headers["X-Accel-Buffering"] = "no"
+        resp.headers["Connection"] = "keep-alive"
+        return resp
 
     if use_web:
         print(f"[search] Performing web search for: {user_input} (mode: {mode})")

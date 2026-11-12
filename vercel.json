@@ -1,17 +1,15 @@
 {
+  "version": 2,
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api"
-    },
-    {
-      "source": "/((?!static/).*)",
-      "destination": "/api"
+      "source": "/(.*)",
+      "destination": "/api/index"
     }
   ],
   "functions": {
     "api/index.py": {
-      "includeFiles": "{templates/**,static/**}"
+      "maxDuration": 60,
+      "includeFiles": "{templates/**,static/**,*.py,gyaan/**,prompts/**,config/**}"
     }
   }
 }
