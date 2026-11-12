@@ -1,0 +1,2 @@
+Rewrite the useful parts into a highly concise and compact final answer.
+Remove repetition, unnecessary extra knowledge, and keep it extremely direct.

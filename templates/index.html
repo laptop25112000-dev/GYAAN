@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GYAAAN — Intelligence, Refined</title>
+  
+  <!-- Modern Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Markdown & Syntax Highlighting -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css" id="hljs-dark-theme" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css" id="hljs-light-theme" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  
+  <!-- Application Stylesheet -->
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    
+    <!-- ======================================================================
+         EXPANDABLE ICON-FIRST SIDEBAR
+         ====================================================================== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-wrapper">
+          <div class="brand-logo-btn" title="GYAAAN Intelligence">
+            <i data-lucide="sparkles"></i>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">GYAAAN</span>
+            <span class="brand-tag">Intelligence</span>
+          </div>
+        </div>
+        <button class="sidebar-toggle-btn" id="sidebar-toggle" title="Toggle Sidebar (Cmd+B)">
+          <i data-lucide="panel-left"></i>
+        </button>
+      </div>
+
+      <!-- Action Button -->
+      <div class="sidebar-actions">
+        <button class="btn-new-chat-primary" id="btn-new-chat" title="New Conversation">
+          <i data-lucide="plus"></i>
+          <span>New Chat</span>
+        </button>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="nav-section">
+        <button class="nav-item active" id="nav-chats-btn" title="Chats">
+          <i data-lucide="message-square"></i>
+          <span>Chats</span>
+        </button>
+        <button class="nav-item" id="nav-explore-btn" title="Explore Prompts">
+          <i data-lucide="compass"></i>
+          <span>Explore</span>
+        </button>
+        <button class="nav-item" id="nav-projects-btn" title="Workspaces">
+          <i data-lucide="folder-kanban"></i>
+          <span>Workspaces</span>
+        </button>
+      </nav>
+
+      <!-- Search & Thread History -->
+      <div class="threads-section">
+        <div class="sidebar-search-box">
+          <i data-lucide="search"></i>
+          <input type="text" id="thread-search-input" placeholder="Search chats..." autocomplete="off" />
+        </div>
+        <span class="threads-label">Recent History</span>
+        <div class="threads-scroll" id="threads-container">
+          <!-- Dynamically populated threads -->
+        </div>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <button class="nav-item" id="btn-theme-toggle" title="Switch Theme">
+          <i data-lucide="sun" id="theme-toggle-icon"></i>
+          <span id="theme-toggle-label">Light Theme</span>
+        </button>
+        <button class="nav-item" id="btn-open-settings" title="Preferences">
+          <i data-lucide="settings"></i>
+          <span>Settings</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ======================================================================
+         MAIN WORKSPACE
+         ====================================================================== -->
+    <main class="workspace">
+      
+      <!-- Top Navigation Bar -->
+      <header class="top-bar">
+        <div class="top-bar-left">
+          <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Open Sidebar">
+            <i data-lucide="menu"></i>
+          </button>
+          <div class="chat-breadcrumb">
+            <h2 id="active-chat-title">What shall we explore today?</h2>
+            <div class="status-pill" id="system-status-pill">
+              <span class="status-dot-active"></span>
+              <span id="status-pill-text">Ready</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode Segmented Control -->
+        <div class="mode-segmented-bar">
+          <button class="mode-tab active" data-mode="hybrid" title="Auto Web Search when needed">
+            <i data-lucide="sparkle"></i>
+            <span>Hybrid</span>
+          </button>
+          <button class="mode-tab" data-mode="web_search" title="Always search the web live">
+            <i data-lucide="globe"></i>
+            <span>Search</span>
+          </button>
+          <button class="mode-tab" data-mode="no_search" title="Model memory only (fastest)">
+            <i data-lucide="zap"></i>
+            <span>Direct</span>
+          </button>
+          <button class="mode-tab" data-mode="image" title="Autonomous Multi-Image Generation">
+            <i data-lucide="image"></i>
+            <span>Image</span>
+          </button>
+        </div>
+
+        <!-- Top Right Actions -->
+        <div class="top-bar-right">
+          <button class="action-pill-btn" id="btn-top-new-chat" title="New Chat">
+            <i data-lucide="plus"></i>
+            <span>New</span>
+          </button>
+          <button class="action-pill-btn" id="btn-clear-history" title="Clear All History">
+            <i data-lucide="trash-2"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Conversation Viewport -->
+      <div class="conversation-viewport">
+        <div class="conversation-scroll" id="conversation-scroll">
+          <div class="centered-container">
+
+            <!-- ==============================================================
+                 APPLE-INSPIRED WELCOME EXPERIENCE
+                 ============================================================== -->
+            <div class="welcome-container" id="welcome-container">
+              <div class="welcome-badge">
+                <i data-lucide="sparkles"></i>
+                <span>Next-Gen Intelligence</span>
+              </div>
+              <div class="welcome-emblem">
+                <i data-lucide="layers" style="width: 36px; height: 36px;"></i>
+              </div>
+              <h1 class="welcome-heading">What shall we explore today?</h1>
+              <p class="welcome-subtext">
+                A refined AI companion equipped with real-time web intelligence, fluid voice interaction, and autonomous visual synthesis.
+              </p>
+
+              <!-- Category Prompt Chips -->
+              <div class="prompt-chips-wrapper">
+                <button class="prompt-chip" onclick="handlePromptChip('Draft a clear, compelling project proposal for our new product roadmap.')">
+                  <i data-lucide="pen-tool"></i>
+                  <span>Writing</span>
+                </button>
+                <button class="prompt-chip" onclick="handlePromptChip('Write a clean, highly optimized Python script to stream and parse large datasets.')">
+                  <i data-lucide="code-2"></i>
+                  <span>Coding</span>
+                </button>
+                <button class="prompt-chip" onclick="handlePromptChip('Summarize the latest breakthroughs in fusion energy research.')">
+                  <i data-lucide="microscope"></i>
+                  <span>Research</span>
+                </button>
+                <button class="prompt-chip" onclick="handlePromptChip('Explain quantum computing and superposition using simple real-world metaphors.')">
+                  <i data-lucide="lightbulb"></i>
+                  <span>Learning</span>
+                </button>
+                <button class="prompt-chip" onclick="handlePromptChip('Brainstorm 5 innovative feature ideas for an Apple-inspired productivity tool.')">
+                  <i data-lucide="rocket"></i>
+                  <span>Brainstorming</span>
+                </button>
+                <button class="prompt-chip" onclick="handlePromptChip('Generate an image of a majestic snow leopard in the Himalayan peaks.')">
+                  <i data-lucide="image"></i>
+                  <span>Image Generation</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Messages Stream -->
+            <div id="messages-feed" style="display: flex; flex-direction: column; gap: 1.5rem;">
+              <!-- Rendered Conversation Cards -->
+            </div>
+
+            <!-- Thinking / Loading Indicator -->
+            <div class="thinking-card hidden" id="thinking-card" style="margin-top: 1.25rem;">
+              <div class="thinking-pulsar">
+                <div class="thinking-dot"></div>
+                <div class="thinking-dot"></div>
+                <div class="thinking-dot"></div>
+              </div>
+              <span class="thinking-label thinking-shimmer-text" id="thinking-label">Formulating response...</span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             MULTILAYERED GLASS COMPOSER
+             ============================================================== -->
+        <footer class="composer-dock">
+          <form class="composer-glass-shell" id="chat-form">
+            
+            <!-- Attachment Tray -->
+            <div class="attachment-tray hidden" id="attachment-tray"></div>
+
+            <div class="composer-main-row">
+              <input type="file" id="file-input" multiple hidden />
+              
+              <button type="button" class="composer-icon-btn" id="btn-attach" title="Attach files (PDFs, Images, Code)">
+                <i data-lucide="paperclip"></i>
+              </button>
+
+              <textarea 
+                id="user-input" 
+                rows="1" 
+                placeholder="Ask GYAAN anything... (Shift + Enter for newline)"
+                autocomplete="off"
+              ></textarea>
+
+              <div class="composer-controls">
+                <button type="button" class="composer-icon-btn voice-mode-trigger" id="btn-voice-toggle" title="Toggle Live Conversational Voice Mode">
+                  <i data-lucide="mic"></i>
+                </button>
+                <button type="button" class="composer-icon-btn" id="btn-clear-text" title="Clear message">
+                  <i data-lucide="eraser"></i>
+                </button>
+                <button type="submit" class="btn-send-primary" id="btn-send" title="Send message">
+                  <i data-lucide="arrow-up"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+          <div class="composer-footnote">
+            GYAAN AI · Thoughtfully designed for focused exploration
+          </div>
+        </footer>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ======================================================================
+       SETTINGS MODAL
+       ====================================================================== -->
+  <div class="modal-scrim" id="settings-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Preferences</h3>
+        <button class="modal-close-btn" id="btn-close-settings" title="Close">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Appearance Theme -->
+        <div class="setting-group">
+          <span class="setting-group-label">Appearance</span>
+          <div class="theme-picker-grid">
+            <button class="theme-card-option" data-theme-choice="system">
+              <i data-lucide="laptop"></i>
+              <span>System</span>
+            </button>
+            <button class="theme-card-option" data-theme-choice="light">
+              <i data-lucide="sun"></i>
+              <span>Light</span>
+            </button>
+            <button class="theme-card-option" data-theme-choice="dark">
+              <i data-lucide="moon"></i>
+              <span>Dark</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Accent Colors -->
+        <div class="setting-group">
+          <span class="setting-group-label">Accent Palette</span>
+          <div class="accent-palette-row">
+            <div class="accent-color-circle active" data-accent="#8B5CF6" style="background: #8B5CF6;" title="Soft Lavender"></div>
+            <div class="accent-color-circle" data-accent="#6366F1" style="background: #6366F1;" title="Royal Violet"></div>
+            <div class="accent-color-circle" data-accent="#EC4899" style="background: #EC4899;" title="Rose Quartz"></div>
+            <div class="accent-color-circle" data-accent="#0EA5E9" style="background: #0EA5E9;" title="Ocean Teal"></div>
+            <div class="accent-color-circle" data-accent="#F59E0B" style="background: #F59E0B;" title="Amber Sun"></div>
+          </div>
+        </div>
+
+        <!-- Sidebar Preferences -->
+        <div class="setting-group">
+          <span class="setting-group-label">Sidebar Layout</span>
+          <div class="theme-picker-grid" style="grid-template-columns: 1fr 1fr;">
+            <button class="theme-card-option" id="btn-pref-compact">
+              <i data-lucide="panel-left-close"></i>
+              <span>Compact Icon Bar</span>
+            </button>
+            <button class="theme-card-option" id="btn-pref-expanded">
+              <i data-lucide="panel-left-open"></i>
+              <span>Expanded Drawer</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Data & Storage -->
+        <div class="setting-group">
+          <span class="setting-group-label">Conversation Data</span>
+          <button class="btn-new-chat-primary" id="btn-modal-clear-history" style="background: rgba(239, 68, 68, 0.1); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.3); box-shadow: none;">
+            <i data-lucide="trash-2"></i>
+            <span>Clear All Local Chats</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       EXPLORE / PROMPT LIBRARY MODAL
+       ====================================================================== -->
+  <div class="modal-scrim" id="explore-modal">
+    <div class="modal-card" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3>Explore Prompt Templates</h3>
+        <button class="modal-close-btn" id="btn-close-explore">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="prompt-chips-wrapper" style="justify-content: flex-start; max-width: 100%;">
+          <button class="prompt-chip" onclick="selectExplorePrompt('Critique this essay draft for tone, flow, and clarity:', 'hybrid')">
+            ✍️ Essay Critique
+          </button>
+          <button class="prompt-chip" onclick="selectExplorePrompt('Review this code for security vulnerabilities, bugs, and performance bottlenecks:', 'no_search')">
+            ⚡ Code Security Audit
+          </button>
+          <button class="prompt-chip" onclick="selectExplorePrompt('What are the key geopolitical events and stock movements today?', 'web_search')">
+            🌐 Live Market Brief
+          </button>
+          <button class="prompt-chip" onclick="selectExplorePrompt('Generate 3 images of a futuristic solar-powered cyberpunk city at dusk', 'image')">
+            🎨 Cyberpunk City Render
+          </button>
+          <button class="prompt-chip" onclick="selectExplorePrompt('Explain the theory of general relativity using the rubber sheet analogy:', 'no_search')">
+            💡 Relativity Explained
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       WORKSPACES MODAL
+       ====================================================================== -->
+  <div class="modal-scrim" id="projects-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Workspaces & Projects</h3>
+        <button class="modal-close-btn" id="btn-close-projects">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">
+          Projects keep your research, documents, and generated images organized by topic.
+        </p>
+        <div style="padding: 1.25rem; border-radius: var(--radius-md); background: var(--bg-surface); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 0.85rem;">
+          <div style="width: 40px; height: 40px; border-radius: var(--radius-sm); background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="folder"></i>
+          </div>
+          <div>
+            <h4 style="font-size: 0.95rem; font-weight: 600;">Main Research Workspace</h4>
+            <span style="font-size: 0.75rem; color: var(--text-tertiary);">Default active workspace</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       APPLICATION JAVASCRIPT ENGINE
+       ====================================================================== -->
+  <script>
+    // State management
+    let threads = [];
+    let activeThreadId = null;
+    let activeMode = 'hybrid';
+    let isSubmitting = false;
+    let selectedFiles = [];
+    let currentTheme = 'system';
+    const maxFiles = 8;
+    const maxFileBytes = 8 * 1024 * 1024;
+
+    // DOM Elements
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+    const conversationScroll = document.getElementById('conversation-scroll');
+    const welcomeContainer = document.getElementById('welcome-container');
+    const messagesFeed = document.getElementById('messages-feed');
+    const thinkingCard = document.getElementById('thinking-card');
+    const thinkingLabel = document.getElementById('thinking-label');
+    const threadsContainer = document.getElementById('threads-container');
+    const activeChatTitle = document.getElementById('active-chat-title');
+    const systemStatusPill = document.getElementById('system-status-pill');
+    const statusPillText = document.getElementById('status-pill-text');
+    
+    const fileInput = document.getElementById('file-input');
+    const btnAttach = document.getElementById('btn-attach');
+    const btnClearText = document.getElementById('btn-clear-text');
+    const attachmentTray = document.getElementById('attachment-tray');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const threadSearchInput = document.getElementById('thread-search-input');
+
+    // Modals
+    const settingsModal = document.getElementById('settings-modal');
+    const exploreModal = document.getElementById('explore-modal');
+    const projectsModal = document.getElementById('projects-modal');
+
+    // -------------------------------------------------------------------------
+    // THEME & COLOR SYSTEM ENGINE
+    // -------------------------------------------------------------------------
+    function initThemeSystem() {
+      const savedTheme = localStorage.getItem('gyaaan_theme') || 'system';
+      const savedAccent = localStorage.getItem('gyaaan_accent') || '#8B5CF6';
+      
+      applyTheme(savedTheme);
+      applyAccent(savedAccent);
+
+      // System theme change listener
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (currentTheme === 'system') {
+          applyTheme('system');
+        }
+      });
+    }
+
+    function applyTheme(themeChoice) {
+      currentTheme = themeChoice;
+      localStorage.setItem('gyaaan_theme', themeChoice);
+      
+      let effectiveTheme = themeChoice;
+      if (themeChoice === 'system') {
+        effectiveTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+
+      document.documentElement.setAttribute('data-theme', effectiveTheme);
+
+      // Switch syntax highlighting stylesheet
+      const darkHljs = document.getElementById('hljs-dark-theme');
+      const lightHljs = document.getElementById('hljs-light-theme');
+      if (darkHljs && lightHljs) {
+        darkHljs.disabled = (effectiveTheme === 'light');
+        lightHljs.disabled = (effectiveTheme === 'dark');
+      }
+
+      // Update theme toggle button label & icon
+      const themeLabel = document.getElementById('theme-toggle-label');
+      const themeIcon = document.getElementById('theme-toggle-icon');
+      if (themeLabel && themeIcon) {
+        if (effectiveTheme === 'dark') {
+          themeLabel.textContent = 'Dark Theme';
+          themeIcon.setAttribute('data-lucide', 'moon');
+        } else {
+          themeLabel.textContent = 'Light Theme';
+          themeIcon.setAttribute('data-lucide', 'sun');
+        }
+        lucide.createIcons();
+      }
+
+      // Update active state in settings modal
+      document.querySelectorAll('.theme-card-option[data-theme-choice]').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-theme-choice') === themeChoice);
+      });
+    }
+
+    function applyAccent(hex) {
+      document.documentElement.style.setProperty('--accent', hex);
+      localStorage.setItem('gyaaan_accent', hex);
+      document.querySelectorAll('.accent-color-circle').forEach(circle => {
+        circle.classList.toggle('active', circle.getAttribute('data-accent') === hex);
+      });
+    }
+
+    // -------------------------------------------------------------------------
+    // SIDEBAR & WORKSPACE INITIALIZATION
+    // -------------------------------------------------------------------------
+    function initApp() {
+      initThemeSystem();
+
+      // Load sidebar expanded preference
+      const sidebarPref = localStorage.getItem('gyaaan_sidebar_state');
+      if (sidebarPref === 'expanded' || window.innerWidth > 1024) {
+        sidebar.classList.add('expanded');
+      }
+
+      // Load saved threads & state
+      const storedThreads = localStorage.getItem('gyaaan_threads');
+      const storedActiveId = localStorage.getItem('gyaaan_active_thread_id');
+      const storedMode = normalizeMode(localStorage.getItem('gyaaan_active_mode'));
+
+      if (storedMode) {
+        activeMode = storedMode;
+        updateModeTabs();
+      }
+
+      if (storedThreads) {
+        try {
+          const parsed = JSON.parse(storedThreads);
+          threads = Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          threads = [];
+        }
+      }
+
+      if (storedActiveId && threads.some(t => t.id === storedActiveId)) {
+        activeThreadId = storedActiveId;
+      } else if (threads.length > 0) {
+        activeThreadId = threads[0].id;
+      } else {
+        createNewThread();
+      }
+
+      const activeThread = threads.find(t => t.id === activeThreadId);
+      if (activeThread && activeThread.mode) {
+        activeMode = normalizeMode(activeThread.mode);
+      }
+      updateModeTabs();
+
+      renderThreads();
+      loadActiveThread();
+      initEventListeners();
+      lucide.createIcons();
+    }
+
+    function normalizeMode(mode) {
+      const v = (mode || 'hybrid').replace('-', '_');
+      if (v === 'search' || v === 'force_search') return 'web_search';
+      if (v === 'direct' || v === 'no-search') return 'no_search';
+      if (v === 'image' || v === 'image_generation') return 'image';
+      return ['hybrid', 'web_search', 'no_search', 'image'].includes(v) ? v : 'hybrid';
+    }
+
+    function updateModeTabs() {
+      document.querySelectorAll('.mode-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.getAttribute('data-mode') === activeMode);
+      });
+    }
+
+    // -------------------------------------------------------------------------
+    // EVENT LISTENERS
+    // -------------------------------------------------------------------------
+    function initEventListeners() {
+      // Sidebar Toggle
+      sidebarToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('expanded');
+        localStorage.setItem('gyaaan_sidebar_state', sidebar.classList.contains('expanded') ? 'expanded' : 'collapsed');
+      });
+
+      mobileMenuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('expanded');
+      });
+
+      // Quick Theme Toggle Button in Sidebar
+      document.getElementById('btn-theme-toggle').addEventListener('click', () => {
+        const nextTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        applyTheme(nextTheme);
+      });
+
+      // Modals
+      document.getElementById('btn-open-settings').addEventListener('click', () => settingsModal.classList.add('active'));
+      document.getElementById('btn-close-settings').addEventListener('click', () => settingsModal.classList.remove('active'));
+      
+      document.getElementById('nav-explore-btn').addEventListener('click', () => exploreModal.classList.add('active'));
+      document.getElementById('btn-close-explore').addEventListener('click', () => exploreModal.classList.remove('active'));
+
+      document.getElementById('nav-projects-btn').addEventListener('click', () => projectsModal.classList.add('active'));
+      document.getElementById('btn-close-projects').addEventListener('click', () => projectsModal.classList.remove('active'));
+
+      // Scrim click close
+      [settingsModal, exploreModal, projectsModal].forEach(modal => {
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) modal.classList.remove('active');
+        });
+      });
+
+      // Settings Theme choices
+      document.querySelectorAll('.theme-card-option[data-theme-choice]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          applyTheme(btn.getAttribute('data-theme-choice'));
+        });
+      });
+
+      // Settings Accent Color choices
+      document.querySelectorAll('.accent-color-circle').forEach(circle => {
+        circle.addEventListener('click', () => {
+          applyAccent(circle.getAttribute('data-accent'));
+        });
+      });
+
+      // Settings Sidebar preferences
+      document.getElementById('btn-pref-compact').addEventListener('click', () => {
+        sidebar.classList.remove('expanded');
+        localStorage.setItem('gyaaan_sidebar_state', 'collapsed');
+      });
+      document.getElementById('btn-pref-expanded').addEventListener('click', () => {
+        sidebar.classList.add('expanded');
+        localStorage.setItem('gyaaan_sidebar_state', 'expanded');
+      });
+
+      // Mode Selector Tabs
+      document.querySelectorAll('.mode-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          activeMode = normalizeMode(this.getAttribute('data-mode'));
+          updateModeTabs();
+          const activeThread = threads.find(t => t.id === activeThreadId);
+          if (activeThread) {
+            activeThread.mode = activeMode;
+          }
+          saveState();
+        });
+      });
+
+      // Search in history
+      threadSearchInput.addEventListener('input', (e) => {
+        renderThreads(e.target.value.trim().toLowerCase());
+      });
+
+      // New Chat Buttons
+      document.getElementById('btn-new-chat').addEventListener('click', createNewThread);
+      document.getElementById('btn-top-new-chat').addEventListener('click', createNewThread);
+
+      // Clear all history
+      const clearHistoryAction = async () => {
+        if (!confirm('Are you sure you want to permanently clear all conversation history?')) return;
+        try {
+          await fetch('/api/history', { method: 'DELETE' });
+        } catch (_) {}
+        localStorage.removeItem('gyaaan_threads');
+        localStorage.removeItem('gyaaan_active_thread_id');
+        threads = [];
+        activeThreadId = null;
+        createNewThread();
+        settingsModal.classList.remove('active');
+      };
+
+      document.getElementById('btn-clear-history').addEventListener('click', clearHistoryAction);
+      document.getElementById('btn-modal-clear-history').addEventListener('click', clearHistoryAction);
+
+      // File attachment trigger
+      btnAttach.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', () => addFiles(fileInput.files));
+
+      // Clear text
+      btnClearText.addEventListener('click', () => {
+        userInput.value = '';
+        userInput.style.height = 'auto';
+        clearSelectedFiles();
+        userInput.focus();
+      });
+
+      // Voice Mode
+      document.getElementById('btn-voice-toggle').addEventListener('click', toggleVoiceMode);
+
+      // Autosize Textarea
+      userInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 180) + 'px';
+      });
+
+      userInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          chatForm.requestSubmit();
+        }
+      });
+
+      // Form Submit
+      chatForm.addEventListener('submit', handleFormSubmit);
+    }
+
+    // -------------------------------------------------------------------------
+    // THREADS MANAGEMENT
+    // -------------------------------------------------------------------------
+    function createNewThread() {
+      const newId = 'thread_' + Date.now();
+      const newThread = {
+        id: newId,
+        title: 'New Conversation',
+        mode: activeMode,
+        history: [],
+        timestamp: new Date().toISOString()
+      };
+      threads.unshift(newThread);
+      activeThreadId = newId;
+      saveState();
+      renderThreads();
+      loadActiveThread();
+      userInput.focus();
+    }
+
+    function saveState() {
+      localStorage.setItem('gyaaan_threads', JSON.stringify(threads));
+      localStorage.setItem('gyaaan_active_thread_id', activeThreadId);
+      localStorage.setItem('gyaaan_active_mode', activeMode);
+    }
+
+    function renderThreads(searchQuery = '') {
+      threadsContainer.innerHTML = '';
+      const filtered = threads.filter(t => !searchQuery || t.title.toLowerCase().includes(searchQuery));
+
+      if (filtered.length === 0) {
+        threadsContainer.innerHTML = '<div style="padding: 1.5rem 0.5rem; text-align: center; font-size: 0.8rem; color: var(--text-tertiary);">No chats found</div>';
+        return;
+      }
+
+      filtered.forEach(thread => {
+        const chip = document.createElement('div');
+        chip.className = `thread-chip ${thread.id === activeThreadId ? 'active' : ''}`;
+        chip.innerHTML = `
+          <i data-lucide="message-square"></i>
+          <span class="thread-chip-title">${escapeHTML(thread.title)}</span>
+          <button class="thread-delete-btn" title="Delete chat">
+            <i data-lucide="x"></i>
+          </button>
+        `;
+
+        chip.addEventListener('click', (e) => {
+          if (e.target.closest('.thread-delete-btn')) {
+            e.stopPropagation();
+            deleteThread(thread.id);
+            return;
+          }
+          activeThreadId = thread.id;
+          activeMode = normalizeMode(thread.mode || activeMode);
+          saveState();
+          updateModeTabs();
+          renderThreads();
+          loadActiveThread();
+          if (window.innerWidth <= 860) {
+            sidebar.classList.remove('expanded');
+          }
+        });
+
+        threadsContainer.appendChild(chip);
+      });
+      lucide.createIcons();
+    }
+
+    function deleteThread(id) {
+      threads = threads.filter(t => t.id !== id);
+      if (activeThreadId === id) {
+        activeThreadId = threads.length > 0 ? threads[0].id : null;
+      }
+      if (!activeThreadId) {
+        createNewThread();
+      } else {
+        saveState();
+        renderThreads();
+        loadActiveThread();
+      }
+    }
+
+    function loadActiveThread() {
+      const activeThread = threads.find(t => t.id === activeThreadId);
+      if (!activeThread) return;
+
+      activeMode = normalizeMode(activeThread.mode || activeMode);
+      updateModeTabs();
+      activeChatTitle.textContent = activeThread.title;
+
+      messagesFeed.innerHTML = '';
+
+      if (activeThread.history.length === 0) {
+        welcomeContainer.classList.remove('hidden');
+      } else {
+        welcomeContainer.classList.add('hidden');
+        activeThread.history.forEach(msg => {
+          appendMessageCard(msg.role, msg.content, msg.sources, false, msg.attachments || [], msg.generated_images || []);
+        });
+      }
+      conversationScroll.scrollTop = conversationScroll.scrollHeight;
+    }
+
+    // -------------------------------------------------------------------------
+    // OUTPUT GIVING PATTERN & FROM-SCRATCH ANSWER ANIMATION ENGINE
+    // -------------------------------------------------------------------------
+    function finalizeAssistantMessage(bubble, wrapper, card, content, sources = [], generatedImages = []) {
+      // 1. Remove caret and render clean markdown
+      const rawHtml = marked.parse(content || '');
+      bubble.innerHTML = window.DOMPurify ? DOMPurify.sanitize(rawHtml) : rawHtml;
+
+      // 2. Transform code blocks into minimal glass code cards
+      bubble.querySelectorAll('pre').forEach(pre => {
+        const codeEl = pre.querySelector('code');
+        const codeText = codeEl ? codeEl.innerText : pre.innerText;
+        let lang = 'code';
+        if (codeEl && codeEl.className) {
+          const m = codeEl.className.match(/language-(\w+)/);
+          if (m) lang = m[1];
+        }
+
+        const codeCard = document.createElement('div');
+        codeCard.className = 'code-card';
+        codeCard.innerHTML = `
+          <div class="code-card-header">
+            <div class="code-lang-tag">
+              <div class="code-dots">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+              </div>
+              <span>${escapeHTML(lang)}</span>
+            </div>
+            <button class="code-copy-btn" title="Copy snippet">
+              <i data-lucide="copy"></i>
+              <span>Copy</span>
+            </button>
+          </div>
+        `;
+        
+        const newPre = pre.cloneNode(true);
+        hljs.highlightElement(newPre.querySelector('code') || newPre);
+        codeCard.appendChild(newPre);
+
+        codeCard.querySelector('.code-copy-btn').addEventListener('click', function() {
+          navigator.clipboard.writeText(codeText);
+          const span = this.querySelector('span');
+          span.textContent = 'Copied!';
+          setTimeout(() => { span.textContent = 'Copy'; }, 1800);
+        });
+
+        pre.replaceWith(codeCard);
+      });
+
+      // 3. Search Sources Accordion
+      if (sources && sources.length > 0) {
+        const acc = document.createElement('div');
+        acc.className = 'sources-card-accordion';
+        acc.innerHTML = `
+          <button class="sources-toggle-btn">
+            <i data-lucide="globe"></i>
+            <span>${sources.length} Verified Sources</span>
+            <i data-lucide="chevron-down" class="chevron"></i>
+          </button>
+          <div class="sources-tray hidden">
+            ${sources.map((s, idx) => `
+              <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="source-item-link">
+                <span class="source-badge-idx">${idx + 1}</span>
+                <div class="source-link-info">
+                  <span class="source-link-title">${escapeHTML(s.title || 'Web Reference')}</span>
+                  <span class="source-link-meta">${escapeHTML([s.provider, s.browser].filter(Boolean).join(' · ') || 'Live Web')}</span>
+                  <span class="source-link-url">${escapeHTML(s.url)}</span>
+                </div>
+              </a>
+            `).join('')}
+          </div>
+        `;
+
+        const btn = acc.querySelector('.sources-toggle-btn');
+        const tray = acc.querySelector('.sources-tray');
+        btn.addEventListener('click', () => {
+          tray.classList.toggle('hidden');
+          btn.classList.toggle('expanded');
+        });
+
+        wrapper.appendChild(acc);
+      }
+
+      // 4. Autonomous Image Generation Gallery
+      if (generatedImages && generatedImages.length > 0) {
+        const gallery = document.createElement('div');
+        gallery.className = 'image-gallery-container';
+        generatedImages.forEach((imgUrl, i) => {
+          const imgCard = document.createElement('div');
+          imgCard.className = 'image-preview-card';
+          imgCard.innerHTML = `
+            <div class="image-frame">
+              <img src="${imgUrl}" alt="Generated Visual ${i + 1}" loading="lazy" />
+            </div>
+            <div class="image-card-footer">
+              <span>${generatedImages.length > 1 ? `Variant ${i + 1}` : 'Generated Image'}</span>
+              <a href="${imgUrl}" target="_blank" rel="noopener noreferrer">Full View ↗</a>
+            </div>
+          `;
+          gallery.appendChild(imgCard);
+        });
+        wrapper.appendChild(gallery);
+      }
+
+      // 5. Sleek Contextual Actions Toolbar
+      const actionsBar = document.createElement('div');
+      actionsBar.className = 'message-actions-bar';
+
+      // Copy Action
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'action-chip-btn';
+      copyBtn.innerHTML = `<i data-lucide="copy"></i><span>Copy</span>`;
+      copyBtn.addEventListener('click', function() {
+        navigator.clipboard.writeText(content);
+        const span = this.querySelector('span');
+        span.textContent = 'Copied!';
+        setTimeout(() => { span.textContent = 'Copy'; }, 1600);
+      });
+      actionsBar.appendChild(copyBtn);
+
+      // Listen / Read Aloud Action
+      const listenBtn = document.createElement('button');
+      listenBtn.className = 'action-chip-btn';
+      listenBtn.innerHTML = `<i data-lucide="volume-2"></i><span>Listen</span>`;
+      listenBtn.addEventListener('click', () => {
+        speakText(content);
+      });
+      actionsBar.appendChild(listenBtn);
+
+      // Regenerate Action
+      const regenBtn = document.createElement('button');
+      regenBtn.className = 'action-chip-btn';
+      regenBtn.innerHTML = `<i data-lucide="refresh-cw"></i><span>Retry</span>`;
+      regenBtn.addEventListener('click', () => {
+        const activeThread = threads.find(t => t.id === activeThreadId);
+        if (activeThread && activeThread.history.length > 1) {
+          const lastUserMsg = activeThread.history.filter(m => m.role === 'user').pop();
+          if (lastUserMsg) {
+            userInput.value = lastUserMsg.content;
+            chatForm.requestSubmit();
+          }
+        }
+      });
+      actionsBar.appendChild(regenBtn);
+
+      wrapper.appendChild(actionsBar);
+      lucide.createIcons();
+    }
+
+    // Streaming Progressive Token Animator (From Scratch)
+    function streamAssistantResponse({ reply, sources = [], generatedImages = [], onComplete }) {
+      welcomeContainer.classList.add('hidden');
+      thinkingCard.classList.add('hidden');
+
+      const card = document.createElement('div');
+      card.className = 'message-card assistant';
+
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar-sphere';
+      avatar.innerHTML = `<i data-lucide="sparkles"></i>`;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'message-bubble-wrapper';
+
+      const metaHeader = document.createElement('div');
+      metaHeader.className = 'message-meta-header';
+      metaHeader.innerHTML = `<span>GYAAN</span>`;
+
+      const bubble = document.createElement('div');
+      bubble.className = 'message-bubble markdown-body';
+      bubble.innerHTML = '<span class="streaming-caret"></span>';
+
+      wrapper.appendChild(metaHeader);
+      wrapper.appendChild(bubble);
+      card.appendChild(avatar);
+      card.appendChild(wrapper);
+
+      messagesFeed.appendChild(card);
+      conversationScroll.scrollTop = conversationScroll.scrollHeight;
+      lucide.createIcons();
+
+      // If image generation response, render immediately without text typing delay
+      if (generatedImages && generatedImages.length > 0) {
+        finalizeAssistantMessage(bubble, wrapper, card, reply, sources, generatedImages);
+        conversationScroll.scrollTop = conversationScroll.scrollHeight;
+        if (onComplete) onComplete();
+        return;
+      }
+
+      // Smooth Token-by-Token Typewriter Stream
+      const tokens = reply.match(/\S+|\s+/g) || [reply];
+      let currentIdx = 0;
+      let accumulated = '';
+      
+      const pace = Math.max(8, Math.min(20, Math.floor(1600 / tokens.length)));
+
+      const timer = setInterval(() => {
+        // Feed 1-3 tokens per step for natural, fluid reading cadence
+        const batch = tokens.length > 250 ? 3 : (tokens.length > 80 ? 2 : 1);
+        for (let b = 0; b < batch && currentIdx < tokens.length; b++) {
+          accumulated += tokens[currentIdx++];
+        }
+
+        const currentHtml = marked.parse(accumulated);
+        bubble.innerHTML = (window.DOMPurify ? DOMPurify.sanitize(currentHtml) : currentHtml) + '<span class="streaming-caret"></span>';
+        conversationScroll.scrollTop = conversationScroll.scrollHeight;
+
+        if (currentIdx >= tokens.length) {
+          clearInterval(timer);
+          finalizeAssistantMessage(bubble, wrapper, card, reply, sources, generatedImages);
+          conversationScroll.scrollTop = conversationScroll.scrollHeight;
+          if (onComplete) onComplete();
+        }
+      }, pace);
+    }
+
+    // Static render for loaded conversation history
+    function appendMessageCard(role, content, sources = [], animate = true, attachments = [], generatedImages = []) {
+      welcomeContainer.classList.add('hidden');
+
+      const card = document.createElement('div');
+      card.className = `message-card ${role === 'user' ? 'user' : 'assistant'}`;
+
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar-sphere';
+      avatar.innerHTML = role === 'user' ? 'Y' : `<i data-lucide="sparkles"></i>`;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'message-bubble-wrapper';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'message-bubble markdown-body';
+
+      if (role === 'user') {
+        bubble.textContent = content || 'Please analyze the attached file(s).';
+        wrapper.appendChild(bubble);
+
+        // Attached Files preview in user message
+        if (attachments && attachments.length > 0) {
+          const tray = document.createElement('div');
+          tray.style.cssText = 'display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.35rem;';
+          attachments.forEach(file => {
+            const chip = document.createElement('div');
+            chip.className = 'attachment-badge';
+            chip.innerHTML = `<i data-lucide="file"></i><span>${escapeHTML(file.name)}</span>`;
+            tray.appendChild(chip);
+          });
+          wrapper.appendChild(tray);
+        }
+      } else {
+        const metaHeader = document.createElement('div');
+        metaHeader.className = 'message-meta-header';
+        metaHeader.innerHTML = `<span>GYAAN</span>`;
+        wrapper.appendChild(metaHeader);
+        wrapper.appendChild(bubble);
+        finalizeAssistantMessage(bubble, wrapper, card, content, sources, generatedImages);
+      }
+
+      card.appendChild(avatar);
+      card.appendChild(wrapper);
+
+      messagesFeed.appendChild(card);
+      conversationScroll.scrollTop = conversationScroll.scrollHeight;
+      lucide.createIcons();
+    }
+
+    // -------------------------------------------------------------------------
+    // FORM SUBMIT & API DISPATCH
+    // -------------------------------------------------------------------------
+    async function handleFormSubmit(e) {
+      if (e) e.preventDefault();
+      if (isSubmitting) return;
+
+      const prompt = userInput.value.trim();
+      if (!prompt && selectedFiles.length === 0) return;
+
+      const activeThread = threads.find(t => t.id === activeThreadId);
+      if (!activeThread) return;
+
+      const filesForMsg = selectedFiles.map(f => ({ name: f.name, size: f.size, type: f.type }));
+
+      userInput.value = '';
+      userInput.style.height = 'auto';
+      userInput.disabled = true;
+      isSubmitting = true;
+
+      // Render user card
+      appendMessageCard('user', prompt, [], true, filesForMsg);
+
+      const isFirst = activeThread.history.length === 0;
+      const historySlice = activeThread.history.slice(-10);
+
+      activeThread.history.push({
+        role: 'user',
+        content: prompt || 'Please analyze attached file(s).',
+        attachments: filesForMsg
+      });
+
+      if (isFirst) {
+        const titleText = prompt || filesForMsg.map(f => f.name).join(', ');
+        activeThread.title = titleText.length > 28 ? titleText.substring(0, 28) + '...' : titleText;
+        activeChatTitle.textContent = activeThread.title;
+        renderThreads();
+      }
+      saveState();
+
+      // Show dynamic thinking indicator
+      thinkingCard.classList.remove('hidden');
+      if (activeMode === 'image' || /image|picture|photo|illustration|draw|paint/i.test(prompt)) {
+        thinkingLabel.textContent = 'Generating visual...';
+      } else if (activeMode === 'web_search' || (activeMode === 'hybrid' && /search|find|news|weather|latest|who/i.test(prompt))) {
+        thinkingLabel.textContent = 'Searching live web references...';
+      } else {
+        thinkingLabel.textContent = 'Formulating response...';
+      }
+      conversationScroll.scrollTop = conversationScroll.scrollHeight;
+
+      try {
+        const filePayloads = await Promise.all(selectedFiles.map(fileToPayload));
+        clearSelectedFiles();
+
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'text/event-stream'
+          },
+          body: JSON.stringify({
+            prompt: prompt,
+            mode: activeMode,
+            history: historySlice,
+            attachments: filePayloads,
+            stream: true
+          })
+        });
+
+        if (!response.ok) {
+          let errMsg = 'Failed to generate response';
+          try {
+            const errData = await response.json();
+            errMsg = errData.error || errMsg;
+          } catch (_) {}
+          throw new Error(errMsg);
+        }
+
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.includes('text/event-stream')) {
+          // Real-time SSE streaming reader
+          thinkingCard.classList.add('hidden');
+
+          const card = document.createElement('div');
+          card.className = 'message-card assistant';
+
+          const avatar = document.createElement('div');
+          avatar.className = 'avatar-sphere';
+          avatar.innerHTML = `<i data-lucide="sparkles"></i>`;
+
+          const wrapper = document.createElement('div');
+          wrapper.className = 'message-bubble-wrapper';
+
+          const metaHeader = document.createElement('div');
+          metaHeader.className = 'message-meta-header';
+          metaHeader.innerHTML = `<span>GYAAN</span>`;
+
+          const bubble = document.createElement('div');
+          bubble.className = 'message-bubble markdown-body';
+          bubble.innerHTML = '<span class="streaming-caret"></span>';
+
+          wrapper.appendChild(metaHeader);
+          wrapper.appendChild(bubble);
+          card.appendChild(avatar);
+          card.appendChild(wrapper);
+
+          messagesFeed.appendChild(card);
+          conversationScroll.scrollTop = conversationScroll.scrollHeight;
+          lucide.createIcons();
+
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder('utf-8');
+          let buffer = '';
+          let accumulated = '';
+          let sources = [];
+          let genImages = [];
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop();
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (!trimmed.startsWith('data:')) continue;
+              const jsonStr = trimmed.slice(5).trim();
+              if (!jsonStr) continue;
+              try {
+                const ev = JSON.parse(jsonStr);
+                if (ev.type === 'token') {
+                  accumulated += ev.token;
+                  const html = marked.parse(accumulated);
+                  bubble.innerHTML = (window.DOMPurify ? DOMPurify.sanitize(html) : html) + '<span class="streaming-caret"></span>';
+                  conversationScroll.scrollTop = conversationScroll.scrollHeight;
+                } else if (ev.type === 'images') {
+                  accumulated = ev.reply || '';
+                  genImages = ev.generated_images || [];
+                } else if (ev.type === 'done') {
+                  if (ev.reply) accumulated = ev.reply;
+                  if (ev.sources) sources = ev.sources;
+                  if (ev.generated_images) genImages = ev.generated_images;
+                } else if (ev.type === 'status') {
+                  thinkingLabel.textContent = ev.status || 'Thinking...';
+                } else if (ev.type === 'error') {
+                  throw new Error(ev.error);
+                }
+              } catch (e) {
+                if (e.message && e.message.indexOf('Unexpected') === -1) {
+                  console.error('SSE event error:', e);
+                }
+              }
+            }
+          }
+
+          finalizeAssistantMessage(bubble, wrapper, card, accumulated, sources, genImages);
+          conversationScroll.scrollTop = conversationScroll.scrollHeight;
+
+          activeThread.history.push({
+            role: 'assistant',
+            content: accumulated,
+            sources: sources,
+            generated_images: genImages
+          });
+          saveState();
+
+          if (isVoiceModeActive && accumulated) {
+            speakText(accumulated);
+          }
+        } else {
+          // Standard JSON fallback
+          const data = await response.json();
+          const aiReply = data.reply || 'No response returned.';
+          const sources = data.sources || [];
+          const genImages = data.generated_images || [];
+
+          activeThread.history.push({
+            role: 'assistant',
+            content: aiReply,
+            sources: sources,
+            generated_images: genImages
+          });
+          saveState();
+
+          streamAssistantResponse({
+            reply: aiReply,
+            sources: sources,
+            generatedImages: genImages,
+            onComplete: () => {
+              if (isVoiceModeActive) {
+                speakText(aiReply);
+              }
+            }
+          });
+        }
+
+      } catch (err) {
+        thinkingCard.classList.add('hidden');
+        appendMessageCard('assistant', `**Error:** ${err.message}`, [], true);
+        if (isVoiceModeActive) {
+          speakText("Sorry, I encountered an error.");
+        }
+      } finally {
+        isSubmitting = false;
+        userInput.disabled = false;
+        userInput.focus();
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // FILE ATTACHMENTS
+    // -------------------------------------------------------------------------
+    function addFiles(files) {
+      const incoming = Array.from(files || []);
+      for (const file of incoming) {
+        if (selectedFiles.length >= maxFiles) break;
+        if (file.size > maxFileBytes) {
+          alert(`${file.name} is larger than 8MB and was skipped.`);
+          continue;
+        }
+        selectedFiles.push(file);
+      }
+      fileInput.value = '';
+      renderSelectedFiles();
+    }
+
+    function renderSelectedFiles() {
+      attachmentTray.innerHTML = '';
+      if (selectedFiles.length === 0) {
+        attachmentTray.classList.add('hidden');
+        return;
+      }
+      attachmentTray.classList.remove('hidden');
+      selectedFiles.forEach((file, idx) => {
+        const badge = document.createElement('div');
+        badge.className = 'attachment-badge';
+        badge.innerHTML = `
+          <i data-lucide="file-up"></i>
+          <span>${escapeHTML(file.name)}</span>
+          <button type="button" class="attachment-remove-btn" data-index="${idx}">
+            <i data-lucide="x"></i>
+          </button>
+        `;
+        badge.querySelector('.attachment-remove-btn').addEventListener('click', () => {
+          selectedFiles.splice(idx, 1);
+          renderSelectedFiles();
+        });
+        attachmentTray.appendChild(badge);
+      });
+      lucide.createIcons();
+    }
+
+    function clearSelectedFiles() {
+      selectedFiles = [];
+      fileInput.value = '';
+      renderSelectedFiles();
+    }
+
+    function fileToPayload(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve({
+          name: file.name,
+          type: file.type || 'application/octet-stream',
+          size: file.size,
+          data: reader.result
+        });
+        reader.onerror = () => reject(new Error(`Could not read ${file.name}`));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // -------------------------------------------------------------------------
+    // CONVERSATIONAL LIVE VOICE MODE
+    // -------------------------------------------------------------------------
+    let isVoiceModeActive = false;
+    let voiceRecognition = null;
+    let isSpeaking = false;
+
+    function initVoiceMode() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) {
+        alert("Speech Recognition is supported in Google Chrome and Microsoft Edge.");
+        return;
+      }
+
+      voiceRecognition = new SpeechRec();
+      voiceRecognition.continuous = false;
+      voiceRecognition.interimResults = false;
+      voiceRecognition.lang = 'en-US';
+
+      voiceRecognition.onstart = () => {
+        const btn = document.getElementById('btn-voice-toggle');
+        if (btn) btn.classList.add('recording');
+        statusPillText.textContent = 'Listening...';
+      };
+
+      voiceRecognition.onresult = async (e) => {
+        const transcript = e.results[0][0].transcript;
+        if (!transcript || !transcript.trim()) return;
+        userInput.value = transcript.trim();
+        chatForm.requestSubmit();
+      };
+
+      voiceRecognition.onerror = (e) => {
+        console.warn("Speech recognition notice:", e.error);
+        if (isVoiceModeActive && !isSpeaking && !isSubmitting && e.error !== 'aborted') {
+          setTimeout(() => {
+            if (isVoiceModeActive && !isSpeaking && !isSubmitting) {
+              try { voiceRecognition.start(); } catch (_) {}
+            }
+          }, 600);
+        }
+      };
+
+      voiceRecognition.onend = () => {
+        const btn = document.getElementById('btn-voice-toggle');
+        if (btn && !isSpeaking) btn.classList.remove('recording');
+        if (isVoiceModeActive && !isSpeaking && !isSubmitting) {
+          setTimeout(() => {
+            if (isVoiceModeActive && !isSpeaking && !isSubmitting) {
+              try { voiceRecognition.start(); } catch (_) {}
+            }
+          }, 400);
+        }
+      };
+    }
+
+    function toggleVoiceMode() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) {
+        alert("Speech Recognition is not available in this browser. Please use Chrome or Edge.");
+        return;
+      }
+      if (!voiceRecognition) initVoiceMode();
+
+      isVoiceModeActive = !isVoiceModeActive;
+      const btn = document.getElementById('btn-voice-toggle');
+
+      if (isVoiceModeActive) {
+        btn.classList.add('active');
+        statusPillText.textContent = 'Voice Active';
+        speakText("Voice mode connected. I'm listening.", () => {
+          try { voiceRecognition.start(); } catch (_) {}
+        });
+      } else {
+        btn.classList.remove('active', 'recording');
+        statusPillText.textContent = 'Ready';
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        try { voiceRecognition.stop(); } catch (_) {}
+      }
+    }
+
+    function speakText(text, onComplete) {
+      if (!window.speechSynthesis) {
+        if (onComplete) onComplete();
+        return;
+      }
+      window.speechSynthesis.cancel();
+      statusPillText.textContent = 'Speaking...';
+
+      const clean = text
+        .replace(/```[\s\S]*?```/g, "Code block omitted.")
+        .replace(/`([^`]+)`/g, "$1")
+        .replace(/https?:\/\/\S+/g, "")
+        .replace(/[*#_~]/g, "")
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+        .trim();
+
+      const utterance = new SpeechSynthesisUtterance(clean);
+      utterance.rate = 1.05;
+      utterance.pitch = 1.0;
+      isSpeaking = true;
+
+      utterance.onend = () => {
+        isSpeaking = false;
+        statusPillText.textContent = isVoiceModeActive ? 'Listening...' : 'Ready';
+        if (onComplete) onComplete();
+        if (isVoiceModeActive && !isSubmitting) {
+          setTimeout(() => {
+            if (isVoiceModeActive && !isSpeaking && !isSubmitting) {
+              try { voiceRecognition.start(); } catch (_) {}
+            }
+          }, 300);
+        }
+      };
+
+      utterance.onerror = () => {
+        isSpeaking = false;
+        statusPillText.textContent = 'Ready';
+        if (onComplete) onComplete();
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // -------------------------------------------------------------------------
+    // UTILITY HELPERS
+    // -------------------------------------------------------------------------
+    function handlePromptChip(promptText) {
+      userInput.value = promptText;
+      userInput.focus();
+      userInput.style.height = 'auto';
+      userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
+    }
+
+    function selectExplorePrompt(promptText, mode) {
+      exploreModal.classList.remove('active');
+      activeMode = mode;
+      updateModeTabs();
+      handlePromptChip(promptText);
+    }
+
+    function escapeHTML(str) {
+      return (str || '').replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+
+    // Start App
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
