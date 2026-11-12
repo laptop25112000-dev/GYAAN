@@ -44,7 +44,9 @@ def api_transcribe():
 
 
 # Expose WSGI application object 'app' for Vercel
-# Local execution entrypoint
+# Universal entrypoint (Replit, Render, Docker, Local)
 if __name__ == "__main__":
-    print("GYAAN UI ready locally at http://127.0.0.1:5000")
-    app.run(debug=True, port=5000, use_reloader=False)
+    port = int(os.environ.get("PORT", 5000))
+    host = os.environ.get("HOST", "0.0.0.0")
+    print(f"GYAAN UI ready at http://{host}:{port}")
+    app.run(host=host, port=port, debug=False, use_reloader=False)

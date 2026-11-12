@@ -1,0 +1,13 @@
+run = "pip install -r requirements.txt && python api/index.py"
+entrypoint = "api/index.py"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["python", "api/index.py"]
+deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
