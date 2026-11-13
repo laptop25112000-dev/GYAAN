@@ -8,7 +8,7 @@
   <!-- Modern Typography & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   
   <!-- Markdown & Syntax Highlighting -->
@@ -155,14 +155,14 @@
             <div class="welcome-container" id="welcome-container">
               <div class="welcome-badge">
                 <i data-lucide="sparkles"></i>
-                <span>Next-Gen Intelligence</span>
+                <span>A little room to think</span>
               </div>
               <div class="welcome-emblem">
                 <i data-lucide="layers" style="width: 36px; height: 36px;"></i>
               </div>
-              <h1 class="welcome-heading">What shall we explore today?</h1>
+              <h1 class="welcome-heading">What would you like to work through?</h1>
               <p class="welcome-subtext">
-                A refined AI companion equipped with real-time web intelligence, fluid voice interaction, and autonomous visual synthesis.
+                Bring a question, a half-formed idea, or a knotty problem. We’ll take it one thoughtful step at a time.
               </p>
 
               <!-- Category Prompt Chips -->
@@ -293,11 +293,11 @@
         <div class="setting-group">
           <span class="setting-group-label">Accent Palette</span>
           <div class="accent-palette-row">
-            <div class="accent-color-circle active" data-accent="#8B5CF6" style="background: #8B5CF6;" title="Soft Lavender"></div>
-            <div class="accent-color-circle" data-accent="#6366F1" style="background: #6366F1;" title="Royal Violet"></div>
-            <div class="accent-color-circle" data-accent="#EC4899" style="background: #EC4899;" title="Rose Quartz"></div>
-            <div class="accent-color-circle" data-accent="#0EA5E9" style="background: #0EA5E9;" title="Ocean Teal"></div>
-            <div class="accent-color-circle" data-accent="#F59E0B" style="background: #F59E0B;" title="Amber Sun"></div>
+            <div class="accent-color-circle active" data-accent="#A45135" style="background: #A45135;" title="Terracotta"></div>
+            <div class="accent-color-circle" data-accent="#8B654A" style="background: #8B654A;" title="Walnut"></div>
+            <div class="accent-color-circle" data-accent="#B57D54" style="background: #B57D54;" title="Cinnamon"></div>
+            <div class="accent-color-circle" data-accent="#7C7766" style="background: #7C7766;" title="Olive stone"></div>
+            <div class="accent-color-circle" data-accent="#9C674F" style="background: #9C674F;" title="Clay rose"></div>
           </div>
         </div>
 
@@ -436,7 +436,7 @@
     // -------------------------------------------------------------------------
     function initThemeSystem() {
       const savedTheme = localStorage.getItem('gyaaan_theme') || 'system';
-      const savedAccent = localStorage.getItem('gyaaan_accent') || '#8B5CF6';
+      const savedAccent = localStorage.getItem('gyaaan_accent') || '#A45135';
       
       applyTheme(savedTheme);
       applyAccent(savedAccent);

@@ -1829,3 +1829,274 @@ button {
     padding: 0.75rem 1rem 1rem 1rem;
   }
 }
+
+
+/* ========================================================================
+   WARM EDITORIAL PROTOTYPE — quiet surfaces, ink, parchment, terracotta
+   ======================================================================== */
+:root {
+  --sidebar-collapsed-width: 68px;
+  --sidebar-expanded-width: 264px;
+  --composer-max-width: 760px;
+  --message-max-width: 760px;
+  --radius-xs: 5px;
+  --radius-sm: 9px;
+  --radius-md: 13px;
+  --radius-lg: 17px;
+  --radius-xl: 21px;
+  --ease-apple: cubic-bezier(0.22, 1, 0.36, 1);
+  --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Lora", Georgia, "Times New Roman", serif;
+  --font-code: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+
+  --accent: #a45135;
+  --accent-hover: #843d28;
+  --accent-soft: rgba(164, 81, 53, 0.10);
+  --accent-border: rgba(164, 81, 53, 0.22);
+  --accent-glow: 0 4px 16px rgba(112, 57, 38, 0.14);
+  --accent-gradient: linear-gradient(135deg, #b36547, #91452f);
+}
+
+:root, [data-theme="light"] {
+  --bg-app: #f7f4ee;
+  --bg-surface: #f4f0e8;
+  --bg-surface-elevated: #fffdf8;
+  --bg-surface-hover: #eee8dd;
+  --bg-surface-active: #e9e0d3;
+  --bg-sidebar: #f1ede5;
+  --glass-bg: rgba(255, 253, 248, 0.94);
+  --glass-border: rgba(82, 62, 45, 0.13);
+  --glass-border-subtle: rgba(82, 62, 45, 0.09);
+  --glass-border-focus: rgba(164, 81, 53, 0.48);
+  --text-primary: #302a24;
+  --text-secondary: #70665b;
+  --text-tertiary: #9b9083;
+  --text-inverse: #fffdf8;
+  --user-bubble-bg: #eee6da;
+  --user-bubble-border: rgba(103, 77, 54, 0.10);
+  --assistant-bubble-bg: transparent;
+  --assistant-bubble-border: transparent;
+  --code-bg: #f1ece3;
+  --code-border: rgba(82, 62, 45, 0.12);
+  --code-header-bg: #eae3d8;
+  --shadow-sm: 0 1px 2px rgba(55, 43, 31, 0.04);
+  --shadow-md: 0 4px 14px rgba(55, 43, 31, 0.07);
+  --shadow-lg: 0 12px 28px rgba(55, 43, 31, 0.09);
+  --shadow-glass: 0 5px 18px rgba(55, 43, 31, 0.05);
+  --blur-glass: blur(18px) saturate(110%);
+}
+
+[data-theme="dark"] {
+  --bg-app: #211d19;
+  --bg-surface: #29231e;
+  --bg-surface-elevated: #302922;
+  --bg-surface-hover: #3a3128;
+  --bg-surface-active: #45382e;
+  --bg-sidebar: #211d19;
+  --glass-bg: rgba(41, 35, 30, 0.95);
+  --glass-border: rgba(233, 220, 204, 0.14);
+  --glass-border-subtle: rgba(233, 220, 204, 0.09);
+  --glass-border-focus: rgba(220, 141, 104, 0.52);
+  --text-primary: #eee7dc;
+  --text-secondary: #bcb0a2;
+  --text-tertiary: #897d70;
+  --text-inverse: #211d19;
+  --user-bubble-bg: #3b3027;
+  --user-bubble-border: rgba(233, 220, 204, 0.12);
+  --assistant-bubble-bg: transparent;
+  --assistant-bubble-border: transparent;
+  --code-bg: #25211d;
+  --code-border: rgba(233, 220, 204, 0.12);
+  --code-header-bg: #302922;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.22);
+  --shadow-md: 0 5px 18px rgba(0, 0, 0, 0.24);
+  --shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.3);
+  --shadow-glass: 0 8px 25px rgba(0, 0, 0, 0.18);
+  --accent: #d18a68;
+  --accent-hover: #e1a184;
+  --accent-soft: rgba(209, 138, 104, 0.13);
+  --accent-border: rgba(209, 138, 104, 0.28);
+  --accent-glow: 0 4px 16px rgba(209, 138, 104, 0.12);
+  --accent-gradient: linear-gradient(135deg, #c17a58, #a65c40);
+  --blur-glass: blur(18px) saturate(110%);
+}
+
+html, body {
+  letter-spacing: -0.012em;
+  transition: background-color 220ms ease, color 220ms ease;
+}
+
+.app-shell {
+  background: var(--bg-app);
+}
+
+.sidebar {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-right-color: var(--glass-border-subtle);
+}
+
+.sidebar-header, .sidebar-footer, .top-bar {
+  border-color: var(--glass-border-subtle);
+}
+
+.brand-logo-btn, .welcome-emblem {
+  background: #4b382b;
+  color: #f8f1e6;
+  box-shadow: none;
+}
+
+.brand-title {
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  letter-spacing: -0.045em;
+}
+
+.btn-new-chat-primary, .btn-send-primary {
+  background: var(--accent-gradient);
+  box-shadow: none;
+}
+
+.btn-new-chat-primary:hover, .btn-send-primary:hover {
+  filter: brightness(1.05);
+}
+
+.nav-item.active {
+  background: var(--bg-surface-active);
+  color: var(--text-primary);
+}
+
+.top-bar {
+  background: var(--bg-app);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.chat-breadcrumb h2, .modal-header h3 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+.mode-segmented-bar {
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  box-shadow: none;
+}
+
+.mode-tab { border-radius: var(--radius-sm); }
+.mode-tab.active {
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.welcome-container {
+  min-height: 56vh;
+  max-width: 660px;
+  gap: 0;
+}
+
+.welcome-badge {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  font-size: 0.68rem;
+  margin-bottom: 1.15rem;
+}
+
+.welcome-emblem {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  margin-bottom: 1.1rem;
+}
+
+.welcome-heading {
+  font-size: clamp(2.25rem, 5vw, 3.2rem);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 1.12;
+  max-width: 620px;
+  margin-bottom: 0.9rem;
+}
+
+.welcome-subtext {
+  font-size: 1rem;
+  max-width: 500px;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.prompt-chips-wrapper { gap: 0.6rem; }
+.prompt-chip {
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.prompt-chip:hover {
+  background: var(--bg-surface-elevated);
+  border-color: var(--accent-border);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.message-card.user .message-bubble {
+  border-radius: 18px;
+  border-bottom-right-radius: 5px;
+  box-shadow: none;
+}
+
+.message-card.assistant .message-meta-header {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.composer-dock {
+  background: linear-gradient(180deg, transparent, var(--bg-app) 45%);
+}
+
+.composer-glass-shell {
+  background: var(--bg-surface-elevated);
+  border-color: var(--glass-border);
+  box-shadow: 0 8px 24px rgba(55, 43, 31, 0.07);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.composer-glass-shell:focus-within {
+  box-shadow: 0 8px 24px rgba(55, 43, 31, 0.07), 0 0 0 3px var(--accent-soft);
+}
+
+.prompt-chip:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 860px) {
+  .top-bar { padding: 0 1rem; }
+  .welcome-container { padding: 1.5rem 0.5rem; }
+  .welcome-heading { font-size: clamp(2rem, 9vw, 2.65rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
